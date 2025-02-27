@@ -11,9 +11,17 @@ public class LAB1 {
 
     public static void main(String[] args) {
         initializeGridLayout();
-        updateGridLayout();
+        HashMap<String, ArrayList<Integer>> target = readMatrixFromFile("C:\\Users\\Casper\\IdeaProjects\\SE375LAB1\\src\\target");
+        HashMap<String, ArrayList<Integer>> filter1 = readMatrixFromFile("C:\\Users\\Casper\\IdeaProjects\\SE375LAB1\\src\\filter1");
+        HashMap<String, ArrayList<Integer>> filter2 = readMatrixFromFile("C:\\Users\\Casper\\IdeaProjects\\SE375LAB1\\src\\filter2");
+        HashMap<String, ArrayList<Integer>> filter3 = readMatrixFromFile("C:\\Users\\Casper\\IdeaProjects\\SE375LAB1\\src\\filter3");
+        HashMap<String, ArrayList<Integer>> matrix = new HashMap<>(target);
+        matrix = applyFilter(matrix, filter1);
+        matrix = applyFilter(matrix, filter2);
+        matrix = applyFilter(matrix, filter3);
+        updateGridLayout(matrix);
     }
-    public static ArrayList<Integer> readMatrixFromFile(String filename){
+    public static HashMap<String, ArrayList<Integer>> readMatrixFromFile(String filename){
         try{
             File file = new File(filename);
             Scanner scanner = new Scanner(file);
@@ -28,46 +36,45 @@ public class LAB1 {
                     }
                 }
             }
-            return list;
+            HashMap<String, ArrayList<Integer>> filters = new HashMap<>();
+            int counter = 0;
+            for(int i=0;i<5;i++){
+                ArrayList <Integer> temp = new ArrayList<>();
+                for(int j=0;j<5;j++){
+                    temp.add(list.get(counter));
+                    counter++;
+                }
+                filters.put(String.valueOf(i), temp);
+            }
+            //System.out.println(filters);
+            return filters;
         }catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+
     }
 
-    public static ArrayList<Integer> applyFilter(){
-        ArrayList<Integer> list = readMatrixFromFile("C:\\Users\\Casper\\OneDrive\\Masaüstü\\System_Programlama_Labs_SE375-\\filter1");
-        ArrayList<Integer> list2 = readMatrixFromFile("C:\\Users\\Casper\\OneDrive\\Masaüstü\\System_Programlama_Labs_SE375-\\filter2");
-        ArrayList<Integer> list3 = readMatrixFromFile("C:\\Users\\Casper\\OneDrive\\Masaüstü\\System_Programlama_Labs_SE375-\\filter3");
-        HashMap<String, ArrayList<Integer>> filters = new HashMap<>();
-        filters.put("filter1",list);
-        filters.put("filter2",list2);
-        filters.put("filter3",list3);
-        //System.out.println(filters);
-        ArrayList<Integer> matrixList = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            int toplam = 0;
-            for (ArrayList<Integer> matrix : filters.values()) {
-                toplam += matrix.get(i); // Aynı indeksteki elemanları topluyor
+    public static HashMap<String, ArrayList<Integer>> applyFilter(HashMap<String, ArrayList<Integer>> lastMatrix, HashMap<String, ArrayList<Integer>> filterMatrix){
+        for (String key : lastMatrix.keySet()) {
+            if (filterMatrix.containsKey(key)) {
+                for (int i = 0; i < 5; i++) {
+                    lastMatrix.get(key).set(i, lastMatrix.get(key).get(i) + filterMatrix.get(key).get(i));
+                }
             }
-            matrixList.add(toplam); // Toplamı ekle
         }
-        //System.out.println(matrixList);
-        return matrixList;
+        return lastMatrix;
     }
 
     /* This method updates the frame after each coloring step.
 
      Hint: After updating a value of an element, you should call this method. */
-    public static void updateGridLayout() {
-        Random rand = new Random();
-        ArrayList<Integer> list = applyFilter();
-        //System.out.println("a" + list);
+    public static void updateGridLayout(HashMap<String, ArrayList<Integer>> matrix) {
         int count = 0;
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-                int value =  list.get(count);
-                count++;
+                int value = matrix.get(String.valueOf(i)).get(j);
                 buttons[i][j].setBackground(getColorForValue(value));
+                count++;
             }
         }
         frame.revalidate();
@@ -109,4 +116,3 @@ public class LAB1 {
         frame.setVisible(true);
     }
 }
-
