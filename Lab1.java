@@ -1,3 +1,5 @@
+import com.sun.tools.javac.Main;
+
 import java.awt.*;
 import javax.swing.*;
 import java.util.*;
@@ -5,9 +7,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 class Coloring extends Thread{
-    HashMap<String, ArrayList<Integer>> lastMatrix;
+    HashMap<Integer, ArrayList<Integer>> lastMatrix;
     JButton[][] buttons;
-    public Coloring(HashMap<String, ArrayList<Integer>> lastMatrix ,JButton[][] buttons){
+    public Coloring(HashMap<Integer, ArrayList<Integer>> lastMatrix ,JButton[][] buttons){
         this.lastMatrix = lastMatrix;
         this.buttons = buttons;
     }
@@ -24,13 +26,14 @@ class Coloring extends Thread{
             default -> Color.WHITE;
         };
     }
+    @Override
     public void run(){
         for (int i = 0; i < lastMatrix.size(); i++) {
             for (int j = 0; j < lastMatrix.size(); j++) {
 
-                int value = lastMatrix.get(String.valueOf(i)).get(j);
+                int value = lastMatrix.get(i).get(j);
                 buttons[i][j].setBackground(getColorForValue(value));
-                buttons[i][j].setText(buttons[i][j].getText()+"T"); // This is the part where threads should write their own signature as text. You should change this "PLACEHOLDER" value.
+                buttons[i][j].setText(buttons[i][j].getText()+Thread.currentThread().getName());
                 try {
                     Thread.sleep(150);
                 } catch (InterruptedException e) {
@@ -41,18 +44,23 @@ class Coloring extends Thread{
     }
 }
 
-class Filters implements Runnable{
-    private HashMap<String, ArrayList<Integer>> lastMatrix;
-    private HashMap<String, ArrayList<Integer>> filterMatrix;
-    public Filters(HashMap<String, ArrayList<Integer>> lastMatrix, HashMap<String, ArrayList<Integer>> filterMatrix){
+class Filters extends Thread{
+    HashMap<Integer, ArrayList<Integer>> lastMatrix;
+    HashMap<Integer, ArrayList<Integer>> filter;
+    JButton[][] buttons;
+    public Filters(HashMap<Integer, ArrayList<Integer>> lastMatrix, HashMap<Integer, ArrayList<Integer>> filter , JButton[][] buttons) {
         this.lastMatrix = lastMatrix;
-        this.filterMatrix = filterMatrix;
+        this.filter = filter;
+        this.buttons = buttons;
     }
+
+@Override
     public void run(){
-        for (String key : lastMatrix.keySet()) {
-            if (filterMatrix.containsKey(key)) {
+        for (Integer key : lastMatrix.keySet()) {
+            if (filter.containsKey(key)) {
                 for (int i = 0; i < 5; i++) {
-                    lastMatrix.get(key).set(i, lastMatrix.get(key).get(i) + filterMatrix.get(key).get(i));
+                    lastMatrix.get(key).set(i, lastMatrix.get(key).get(i) + filter.get(key).get(i));
+                    buttons[key][i].setText(buttons[key][i].getText()+Thread.currentThread().getName());
                 }
             }
         }
@@ -63,21 +71,28 @@ public class Lab1 {
     public static final int SIZE = 5;
     private static JFrame frame;
     private static JButton[][] buttons;
-
+    static HashMap<Integer, ArrayList<Integer>> target;
+    static HashMap<Integer, ArrayList<Integer>> filter1;
+    static HashMap<Integer, ArrayList<Integer>> filter2;
+    static HashMap<Integer, ArrayList<Integer>> filter3;
 
     public static void main(String[] args) throws InterruptedException {
         initializeGridLayout();
-        HashMap<String, ArrayList<Integer>> target = readMatrixFromFile("C:\\Users\\Casper\\OneDrive\\Masaüstü\\System_Programlama_Labs_SE375-\\target");
-        HashMap<String, ArrayList<Integer>> filter1 = readMatrixFromFile("C:\\Users\\Casper\\OneDrive\\Masaüstü\\System_Programlama_Labs_SE375-\\filter1");
-        HashMap<String, ArrayList<Integer>> filter2 = readMatrixFromFile("C:\\Users\\Casper\\OneDrive\\Masaüstü\\System_Programlama_Labs_SE375-\\filter2");
-        HashMap<String, ArrayList<Integer>> filter3 = readMatrixFromFile("C:\\Users\\Casper\\OneDrive\\Masaüstü\\System_Programlama_Labs_SE375-\\filter3");
-        HashMap<String, ArrayList<Integer>> matrix = new HashMap<>(target);
-        Thread t1 = new Thread(new Filters(matrix ,filter1));
-        Thread t2 = new Thread(new Filters(matrix ,filter2));
-        Thread t3 = new Thread(new Filters(matrix,filter3));
-        Thread t4 = new Coloring(matrix,buttons);
+        target = readMatrixFromFile("C:\\Users\\Casper\\OneDrive\\Masaüstü\\System_Programlama_Labs_SE375-\\target");
+        filter1 = readMatrixFromFile("C:\\Users\\Casper\\OneDrive\\Masaüstü\\System_Programlama_Labs_SE375-\\filter1");
+        filter2 = readMatrixFromFile("C:\\Users\\Casper\\OneDrive\\Masaüstü\\System_Programlama_Labs_SE375-\\filter2");
+        filter3 = readMatrixFromFile("C:\\Users\\Casper\\OneDrive\\Masaüstü\\System_Programlama_Labs_SE375-\\filter3");
+        Thread t1 = new  Filters(target,filter1,buttons);
+        Thread t2 = new Filters(target,filter2,buttons);
+        Thread t3 = new Filters(target,filter3,buttons);
+        Thread t4 = new Coloring(target,buttons);
+        t1.setName("T1");
+        t2.setName("T2");
+        t3.setName("T3");
+        t4.setName("T4");
         t1.start();
         t2.start();
+        t2.join();
         t3.start();
         t1.join();
         t2.join();
@@ -87,7 +102,7 @@ public class Lab1 {
         frame.repaint();
 
     }
-    public static HashMap<String, ArrayList<Integer>> readMatrixFromFile(String filename){
+    public static HashMap<Integer, ArrayList<Integer>> readMatrixFromFile(String filename){
         try{
             File file = new File(filename);
             Scanner scanner = new Scanner(file);
@@ -102,7 +117,7 @@ public class Lab1 {
                     }
                 }
             }
-            HashMap<String, ArrayList<Integer>> filters = new HashMap<>();
+            HashMap<Integer, ArrayList<Integer>> filters = new HashMap<>();
             int counter = 0;
             for(int i=0;i<5;i++){
                 ArrayList <Integer> temp = new ArrayList<>();
@@ -110,7 +125,7 @@ public class Lab1 {
                     temp.add(list.get(counter));
                     counter++;
                 }
-                filters.put(String.valueOf(i), temp);
+                filters.put(i, temp);
             }
             //System.out.println(filters);
             return filters;
