@@ -26,11 +26,9 @@ class Coloring extends Thread{
             default -> Color.WHITE;
         };
     }
-    @Override
     public void run(){
         for (int i = 0; i < lastMatrix.size(); i++) {
             for (int j = 0; j < lastMatrix.size(); j++) {
-
                 int value = lastMatrix.get(i).get(j);
                 buttons[i][j].setBackground(getColorForValue(value));
                 buttons[i][j].setText(buttons[i][j].getText()+Thread.currentThread().getName());
@@ -54,7 +52,6 @@ class Filters extends Thread{
         this.buttons = buttons;
     }
 
-@Override
     public void run(){
         for (Integer key : lastMatrix.keySet()) {
             if (filter.containsKey(key)) {
@@ -100,7 +97,6 @@ public class Lab1 {
         t4.start();
         frame.revalidate();
         frame.repaint();
-
     }
     public static HashMap<Integer, ArrayList<Integer>> readMatrixFromFile(String filename){
         try{
@@ -109,7 +105,6 @@ public class Lab1 {
             ArrayList<Integer> list = new ArrayList<>();
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine().trim();
-                //System.out.println(line);
                 if (!line.isEmpty()) {
                     String[] parts = line.split("\\s+");
                     for (String part : parts) {
@@ -127,21 +122,16 @@ public class Lab1 {
                 }
                 filters.put(i, temp);
             }
-            //System.out.println(filters);
             return filters;
         }catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-
     }
 
-
-    // This is the method where our frame is created.
     public static void initializeGridLayout() {
         frame = new JFrame("Sequential");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new GridLayout(SIZE, SIZE));
-
         buttons = new JButton[SIZE][SIZE];
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
@@ -151,7 +141,6 @@ public class Lab1 {
                 frame.add(button);
             }
         }
-        //	updateGridLayout();
         frame.setSize(600, 600);
         frame.setVisible(true);
     }
