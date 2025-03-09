@@ -9,7 +9,8 @@ import java.io.FileNotFoundException;
 class FilterThread extends Thread{
     HashMap<Integer, ArrayList<Integer>> lastMatrix;
     HashMap<Integer, ArrayList<Integer>> filter;
-    public FilterThread(HashMap<Integer, ArrayList<Integer>> lastMatrix, HashMap<Integer, ArrayList<Integer>> filter ) {
+    public FilterThread(HashMap<Integer, ArrayList<Integer>> lastMatrix, HashMap<Integer, ArrayList<Integer>> filter, String name) {
+        super(name);
         this.lastMatrix = lastMatrix;
         this.filter = filter;
     }
@@ -50,7 +51,8 @@ class GUIThread extends Thread{
 
 class ColorThread extends Thread{
     HashMap<Integer, ArrayList<Integer>> lastMatrix;
-    public ColorThread(HashMap<Integer, ArrayList<Integer>> lastMatrix ){
+    public ColorThread(HashMap<Integer, ArrayList<Integer>> lastMatrix, String name){
+        super(name);
         this.lastMatrix = lastMatrix;
     }
     private static Color getColorForValue(int value) {
@@ -125,24 +127,20 @@ class Operator extends GUIThread{
         filter1 = readMatrixFromFile("C:\\Users\\Casper\\IdeaProjects\\SE375LABS\\filter1");
         filter2 = readMatrixFromFile("C:\\Users\\Casper\\IdeaProjects\\SE375LABS\\filter2");
         filter3 = readMatrixFromFile("C:\\Users\\Casper\\IdeaProjects\\SE375LABS\\filter3");
-        Thread t1 = new FilterThread(target,filter1);
-        Thread t2 = new FilterThread(target,filter2);
-        Thread t3 = new FilterThread(target,filter3);
-        Thread t4 = new ColorThread(target);
-        t1.setName("T1");
-        t2.setName("T2");
-        t3.setName("T3");
-        t4.setName("T4");
+        Thread t1 = new FilterThread(target,filter1,"T1");
+        Thread t2 = new FilterThread(target,filter2,"T2");
+        Thread t3 = new FilterThread(target,filter3,"T3");
+        Thread t4 = new ColorThread(target,"T4");
         long startTime = System.nanoTime();
         t1.start();
-        t1.join();
-        t2.start();
-        t2.join();
-        t3.start();
-        t3.join();
         //t1.join();
+        t2.start();
         //t2.join();
+        t3.start();
         //t3.join();
+        t1.join();
+        t2.join();
+        t3.join();
         t4.start();
         t4.join();
 
@@ -168,7 +166,7 @@ class Operator extends GUIThread{
     }
 }
 
-public class Labs {
+public class Lab1 {
     public static void main(String[] args) throws InterruptedException, IOException {
         Operator o1 = new Operator();
         for(int i=0 ; i<10;i++){

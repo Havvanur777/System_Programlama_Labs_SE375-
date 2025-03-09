@@ -1,0 +1,70 @@
+5 6 7 8 5  
+4 4 8 6 5  
+4 8 6 5 7  
+4 7 6 4 5  
+5 5 8 5 4  
+Total Execution Time: 3.989751 s
+
+5 6 7 8 5  
+5 4 8 6 6  
+6 8 6 7 7  
+5 5 3 4 5  
+3 5 6 5 4  
+Total Execution Time: 3.9811875 s
+
+5 6 7 8 5  
+5 4 8 6 6  
+6 8 6 7 7  
+1 7 6 4 5  
+5 5 8 5 4  
+Total Execution Time: 3.9943441 s
+
+5 6 7 8 5  
+5 4 8 6 6  
+6 8 6 7 7  
+5 7 6 4 5  
+5 5 8 5 3  
+Total Execution Time: 3.98748 s
+
+5 6 7 8 5  
+5 4 8 6 6  
+6 8 6 7 4  
+5 7 6 4 5  
+5 5 8 5 4  
+Total Execution Time: 3.9909422 s
+
+5 6 7 8 5  
+5 4 8 6 6  
+6 8 6 7 7  
+5 7 6 4 5  
+5 5 8 5 2  
+Total Execution Time: 3.9901442 s
+
+5 6 7 8 5  
+5 4 8 6 6  
+6 8 6 7 7  
+5 7 6 4 5  
+5 5 8 5 4  
+Total Execution Time: 3.9965302 s
+
+5 6 7 8 5  
+5 4 6 4 6  
+6 2 6 7 7  
+5 5 6 3 5  
+4 5 6 5 4  
+Total Execution Time: 4.0069765 s
+
+5 6 7 8 5  
+5 4 8 6 6  
+6 8 6 7 7  
+5 7 6 4 5  
+5 5 8 5 4  
+Total Execution Time: 3.9866505 s
+
+5 6 7 8 5  
+5 4 8 6 6  
+6 8 6 7 7  
+5 7 6 4 2  
+5 5 8 5 4  
+Total Execution Time: 3.9907688 s
+
